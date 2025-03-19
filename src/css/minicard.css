@@ -1,0 +1,57 @@
+.mini-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(to bottom, #87CEEB, #4682B4); 
+    color: white;
+    font-family: 'Arial', sans-serif;        
+    border-radius: 8px;
+    margin: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 250px; 
+  }
+  
+  .mini-card img {
+    width: 50px;           
+  }
+  
+  .mini-card h4 {
+    margin: 0 10px;       
+    flex-grow: 1;          
+  }
+  
+  
+  @media (max-width: 600px) {
+    .mini-card {
+      width: calc(100% - 20px); 
+    }
+  }
+  
+  .mini-card .mini-weather-info {
+    margin-left: 10px;
+    flex-grow: 1;
+  }
+    .delete-button {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: none;
+      border: none;
+      color: white; 
+      cursor: pointer;
+      width: 24px; 
+      height: 24px; 
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.5; 
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    
+    .delete-button:hover {
+      transform: scale(1.5); 
+      opacity: 1; 
+    }

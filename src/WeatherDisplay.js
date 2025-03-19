@@ -1,7 +1,7 @@
 import React from "react";
 
 function kelvinToCelsius(kelvin) {
-  return (kelvin - 273.15).toFixed(2); // Redondea a dos decimales
+  return (kelvin - 273.15).toFixed(2); 
 }
 
 function WeatherDisplay({ weatherData, onMonitor }) {

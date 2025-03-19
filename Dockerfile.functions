@@ -1,0 +1,9 @@
+
+FROM mcr.microsoft.com/azure-functions/node:4-node16-appservice AS base
+
+WORKDIR /home/site/wwwroot
+COPY . .
+
+RUN npm install
+
+EXPOSE 7071

@@ -13,7 +13,7 @@ function MiniCard({city,onDelete,onClick}){
             <h4>{city.name}</h4>
             <p>{temperatureCelsius}°C</p>
           </div>
-          <button onClick={(e) => { e.stopPropagation(); onDelete(city.name); }} className="delete-button">
+          <button onClick={(e) => { e.stopPropagation(); onDelete(city); }} className="delete-button">
             <i className="fas fa-trash"></i>
           </button>
         </div>

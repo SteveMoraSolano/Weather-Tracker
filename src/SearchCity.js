@@ -1,79 +1,76 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from "axios";
+import { debounce } from 'lodash'; 
 
-function SearchCity({ onSearch , onClear}) {
+function SearchCity({ onSearch, onClear }) {
   const [city, setCity] = useState('');
-  const [lat] = useState('');
-    const [lon] = useState('');
   const [suggestions, setSuggestions] = useState([]);
- 
 
-  const handleCityChange = async (event) => {
-    setCity(event.target.value);
-    onClear();
-    if (event.target.value.length > 2) {
-      const vMapsKey = process.env.REACT_APP_AZURE_MAPS_KEY;
-      const url = `https://atlas.microsoft.com/search/address/json?api-version=1.0&subscription-key=${vMapsKey}&query=${event.target.value}&typeahead=true&limit=5`;
+  useEffect(() => {
 
-      try {
-        const response = await axios.get(url);
-        
-        setSuggestions(response.data.results);
-      } catch (error) {
-        console.error('Error fetching city suggestions', error);
+    const debouncedSearch = debounce(async (city) => {
+      if (city.length > 2) {
+        const vMapsKey = process.env.REACT_APP_AZURE_MAPS_KEY;
+        const url = `https://atlas.microsoft.com/search/address/json?api-version=1.0&subscription-key=${vMapsKey}&query=${city}&typeahead=true&limit=5`;
+        try {
+          const response = await axios.get(url);
+          setSuggestions(response.data.results);
+        } catch (error) {
+          console.error('Error fetching city suggestions', error);
+          setSuggestions([]);
+        }
+      } else {
         setSuggestions([]);
       }
-    } else {
-      setSuggestions([]);
-    }
+    }, 300);
+
+    if (city) debouncedSearch(city);
+    return () => debouncedSearch.cancel();
+  }, [city]);
+
+  const handleCityChange = event => {
+    setCity(event.target.value);
+    onClear();
   };
 
-  const handleSuggestionClick = (suggestion) => {
+  const handleSuggestionClick = suggestion => {
     setSuggestions([]);
     if (suggestion.position) {
-    onSearch(suggestion.position.lat, suggestion.position.lon);
-}
-  }
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    onSearch(lat, lon);
+      onSearch(suggestion.position.lat, suggestion.position.lon);
+    }
   };
 
   return (
     <div>
-    <form onSubmit={handleSubmit}>
-    <input
-        type="text"
-        id = "txtSearchCity"
-        value={city}
-        onChange={handleCityChange}
-        placeholder="Enter a city"
-        required
-    />
-    </form>
-   
-    {suggestions.length > 0 && (
+      <form onSubmit={e => e.preventDefault()}>
+        <input
+          type="text"
+          id="txtSearchCity"
+          value={city}
+          onChange={handleCityChange}
+          placeholder="Enter a city"
+          required
+        />
+      </form>
+      {suggestions.length > 0 && (
         <ul>
-            {suggestions.map((suggestion, index) => (
-                <li class="listCity" 
-                key={index} onClick={() => handleSuggestionClick(suggestion)}>
-                     <div>
-            <p>
-                <span style={{ fontWeight: 'bold' }}>
+          {suggestions.map((suggestion, index) => (
+            <li className="listCity" key={index} onClick={() => handleSuggestionClick(suggestion)}>
+              <div>
+                <p>
+                  <span style={{ fontWeight: 'bold' }}>
                     {suggestion.address.municipality}
-                </span>
-                <br />
-                {suggestion.address.countrySubdivisionName}, {suggestion.address.country}
-            </p>
-            
-        </div>
-                </li>
-            ))}
+                  </span>
+                  <br />
+                  {suggestion.address.countrySubdivisionName}, {suggestion.address.country}
+                </p>
+              </div>
+            </li>
+          ))}
         </ul>
-    )}
-</div>
-);
+      )}
+    </div>
+  );
 }
 
 export default SearchCity;
